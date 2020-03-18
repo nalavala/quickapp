@@ -1,0 +1,17 @@
+.tags {
+
+  .selected-tags {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    .chip {
+      margin-left: 10px;
+      margin-top: 10px;
+    }
+  }
+
+
+  .tags-search {
+
+  }
+}

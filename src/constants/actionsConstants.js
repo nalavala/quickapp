@@ -1,0 +1,15 @@
+export const DONE_CLICKED = 'DONE_CLICKED';
+export const CANCEL_CLICKED = "CANCEL_CLICKED";
+export const EDIT_MENU_CLICKED = "EDIT_MENU_CLICKED";
+export const SHORTCUT_TAIL_CLICKED = "SHORTCUT_TAIL_CLICKED";
+export const ADD_SHORTCUT = "ADD_SHORTCUT";
+export const REMOVE_SHORTCUT = "REMOVE_SHORTCUT";
+export const UPDATE_SHORTCUT = "UPDATE_SHORTCUT";
+export const CLEAR_MODAL_PROPS = "CLEAR_MODAL_PROPS";
+export const REMOVE_TAG = "REMOVE_TAG";
+export const ADD_TAG = "ADD_TAG";
+export const CREATE_TAG = "CREATE_TAG";
+export const FECTH_TAGS = "FECTH_TAGS";
+export const SEARCH_CLICKED = "SEARCH_CLICKED";
+export const FILTER_BY_TAG = "FILTER_BY_TAG";
+
