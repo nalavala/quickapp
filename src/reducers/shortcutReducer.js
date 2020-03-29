@@ -5,14 +5,23 @@ import {
     UPDATE_SHORTCUT,
     REMOVE_SHORTCUT,
     ADD_TAG,
-    REMOVE_TAG, FECTH_TAGS, CREATE_TAG, SEARCH_CLICKED, CLEAR_MODAL_PROPS, FILTER_BY_TAG
+    REMOVE_TAG,
+    FECTH_TAGS,
+    CREATE_TAG,
+    SEARCH_CLICKED,
+    CLEAR_MODAL_PROPS,
+    FILTER_BY_TAG,
+    HANDLE_DROP,
+    SHORTCUTS_FETCHED,
+    TAGS_FETCHED, SHORTCUT_SELECTED, DELETE_SHORTCUTS, FAVOURITE_SHORTCUT, FETCH_FAVOURITES
 } from "../constants/actionsConstants";
+import {getShortcuts} from "../api/shortcuts-api";
 
 var _ = require('lodash');
 
 
-const tags = {
-    /*"12": {
+let tags = {
+    "12": {
         "id": "12",
         "value": "spring"
     },
@@ -28,7 +37,7 @@ const tags = {
         "id": "15",
         "value": "spring"
     },
-    "16": {
+    /*"16": {
         "id": "12",
         "value": "spring"
     },
@@ -91,7 +100,7 @@ const tags = {
 
 };
 
-const shortcuts = {
+let shortcuts = {
     "123": {
         "id": "123",
         "name": "test",
@@ -119,32 +128,19 @@ const shortcuts = {
 }
 
 const intialData = {
-    shortcuts: shortcuts,
+    shortcuts: {},
     editingShortcutDetails: {
         shortcut: {}
     },
     isDialogOpen: false,
-    tags: tags,
+    tags: {},
+    selectedShortcuts: []
 
 
 };
 
-
-let randomData = ["hello", "revanth", "readdy"];
-
-const generateUUID = () => {
-    var d = new Date().getTime();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
-    return uuid;
-};
 const shortcutReducer = (state = intialData, action) => {
     let shortcutId;
-    let name;
-    let url;
     let updatedShortcuts;
     switch (action.type) {
         case EDIT_MENU_CLICKED :
@@ -158,6 +154,7 @@ const shortcutReducer = (state = intialData, action) => {
             };
             break;
         case SHORTCUT_TAIL_CLICKED : {
+
             shortcutId = action.payload.id;
             if (shortcutId === "ADD_SHORTCUT") {
                 state = {
@@ -175,19 +172,9 @@ const shortcutReducer = (state = intialData, action) => {
             break;
         }
         case ADD_SHORTCUT : {
-            let name = action.payload.name;
-            let url = action.payload.url;
-            let tags = action.payload.tags;
-            let newUUID = generateUUID();
-
-            let updatedShortcuts = {
-                ...state.shortcuts, [newUUID]: {
-                    id: newUUID,
-                    name,
-                    url,
-                    tags
-                }
-            };
+            let shortcut = action.payload.shortcut;
+            let updatedShortcuts = {[shortcut._id]: shortcut, ...state.shortcuts,};
+            shortcuts = updatedShortcuts;
             state = {
                 ...state,
                 shortcuts: updatedShortcuts,
@@ -197,29 +184,19 @@ const shortcutReducer = (state = intialData, action) => {
             break;
         }
         case REMOVE_SHORTCUT : {
-            let shortcutId = action.payload.id;
-            let updatedShortcuts = {...state.shortcuts};
-            delete updatedShortcuts[shortcutId];
+            let shortcuts = action.payload.shortcuts;
             state = {
                 ...state,
-                shortcuts: updatedShortcuts,
-                isDialogOpen: !state.isDialogOpen
+                shortcuts,
+                isDialogOpen: false
             };
             break;
         }
         case UPDATE_SHORTCUT : {
 
-            let id = action.payload.id;
-            name = action.payload.name;
-            url = action.payload.url;
-            let tags = action.payload.tags;
+            let shortcut = action.payload.shortcut;
             updatedShortcuts = {
-                ...state.shortcuts, [id]: {
-                    id,
-                    name,
-                    url,
-                    tags
-                }
+                ...state.shortcuts, [shortcut._id]: shortcut
             };
             state = {
                 ...state,
@@ -278,16 +255,15 @@ const shortcutReducer = (state = intialData, action) => {
             break;
         }
         case CREATE_TAG : {
-            let tagValue = action.payload.tagValue;
-            let tagId = generateUUID();
-            let newTags = {...state.tags, [tagId] : {
-                id: tagId,
-                value: tagValue
-            }};
+            let tag = action.payload.tag;
+            let tagId = tag._id;
+            // append to existing tags
+            let newTags = {[tagId]: tag, ...state.tags};
             let editingShortcutDetails = {...state.editingShortcutDetails};
-            if(_.isEmpty(editingShortcutDetails.shortcut.tags)) {
+            if (_.isEmpty(editingShortcutDetails.shortcut.tags)) {
                 editingShortcutDetails.shortcut.tags = [];
             }
+
             editingShortcutDetails.shortcut.tags.push(tagId);
             state = {
                 ...state,
@@ -298,55 +274,26 @@ const shortcutReducer = (state = intialData, action) => {
             break;
         }
         case SEARCH_CLICKED : {
-            let text = action.payload.searchText;
-            text.trim();
             let context = action.payload.context;
             switch (context) {
                 case "shortcut" : {
-                    if (text === "") {
-                        state = {
-                            ...state,
-                            searchText: text,
-                            shortcuts: shortcuts
-                        };
-                        break;
-                    }
-                    let filteredShortcuts = [];
-                    Object.values(shortcuts).forEach(shortcut => {
-                        if (shortcut.name.indexOf(text) >= 0) {
-                            filteredShortcuts[shortcut.id] = {...shortcut};
-                        }
-                    });
+                    let searchedShortcuts = action.payload.shortcuts;
                     state = {
                         ...state,
-                        searchText: text,
-                        shortcuts: filteredShortcuts
+                        shortcuts: searchedShortcuts,
+                        selectedTag: null
                     };
                 }
                     break;
                 case "tags": {
-                    if (text === " ") {
-                        state = {
-                            ...state,
-                            tags: tags
-                        };
-                        break;
-                    }
-                    let filteredTags = Object.values(tags).filter(tag => {
-                        return tag.value.indexOf(text) >= 0;
-                    });
+                    let searchedTags = action.payload.tags;
                     state = {
                         ...state,
-                        tags: filteredTags
+                        tags: searchedTags
                     };
                 }
                 case "shortcut_tags" : {
-                    if (text === "") {
-                        break;
-                    }
-                    let filteredTags = Object.values(tags).filter(tag => {
-                        return tag.value.indexOf(text) >= 0;
-                    });
+                    let filteredTags = action.payload.tags;
                     state = {
                         ...state,
                         editingShortcutDetails: {...state.editingShortcutDetails, popperData: filteredTags}
@@ -367,25 +314,107 @@ const shortcutReducer = (state = intialData, action) => {
         }
         case FILTER_BY_TAG : {
             let tagId = action.payload.id;
-            if(tagId === state.selectedTag) {
+            if (tagId === state.selectedTag) {
                 state = {
                     ...state,
                     shortcuts,
-                    selectedTag : ""
+                    selectedTag: ""
                 };
                 break;
             }
-            let filteredShortcuts = {};
+            state = {
+                ...state,
+                shortcuts: action.payload.shortcuts,
+                selectedTag: tagId
+            };
+        }
+            break;
+        case HANDLE_DROP : {
+            let shortcutId = action.payload.id;
+            let shortcuts = {...state.shortcuts};
+            delete shortcuts[shortcutId];
+            state = {
+                ...state,
+                shortcuts
+            }
+        }
+            break;
+        case SHORTCUTS_FETCHED: {
+            let shortcuts = action.payload.shortcuts;
+            let results = {};
             Object.values(shortcuts).forEach(shortcut => {
-                if (shortcut.tags.includes(tagId)) {
-                    filteredShortcuts[shortcut.id] = shortcut;
-                }
+                shortcut["id"] = shortcut._id;
+                results[shortcut.id] = shortcut;
             });
             state = {
                 ...state,
-                shortcuts: filteredShortcuts,
-                selectedTag : tagId
+                shortcuts: results
             };
+            break;
+        }
+
+        case TAGS_FETCHED: {
+            let tags = action.payload.tags;
+            let results = {};
+            tags.forEach(tag => {
+                tag["id"] = tag._id;
+                results[tag.id] = tag;
+            });
+            state = {
+                ...state,
+                tags: results
+            }
+            break;
+        }
+
+        case SHORTCUT_SELECTED: {
+            let shortcutId = action.payload.id;
+            let isSelected = action.payload.isChecked;
+            let selectedIds = [...state.selectedShortcuts];
+            if (isSelected) {
+                selectedIds.push(shortcutId);
+            } else {
+                _.remove(selectedIds, (id) => {
+                    return id === shortcutId;
+                })
+            }
+
+
+            state = {
+                ...state,
+                selectedShortcuts: selectedIds
+            };
+            break;
+        }
+
+        case DELETE_SHORTCUTS : {
+            let shortcuts = action.payload.shortcuts;
+
+            state = {
+                ...state,
+                shortcuts: shortcuts,
+                selectedShortcuts: []
+            };
+            break;
+        }
+        case FAVOURITE_SHORTCUT : {
+            let shortcut = action.payload.shortcut;
+            let shortcuts = {...state.shortcuts};
+            shortcuts[shortcut._id] = shortcut;
+            state = {
+                ...state,
+                shortcuts: shortcuts,
+            };
+            break;
+        }
+        case FETCH_FAVOURITES : {
+            let shortcuts = action.payload.shortcuts;
+            state = {
+                ...state,
+                shortcuts: shortcuts,
+                isMyFavouritesClicked : !state.isMyFavouritesClicked
+            };
+            break;
         }
 
     }

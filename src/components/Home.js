@@ -1,7 +1,7 @@
 import React from 'react';
 import NavBar from "./NavBar";
 import MainBodyView from "./MainBodyView";
-import './main.scss'
+import './main.scss';
 
 const Home = (props) => {
 
@@ -14,5 +14,7 @@ const Home = (props) => {
         </>
     )
 };
+
+
 
 export default Home;

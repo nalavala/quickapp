@@ -14,7 +14,7 @@ export default function CustomDialog(props) {
     const [name, setName] = React.useState(editingName);
     const [url, setUrl] = React.useState(editingUrl);
     const handleDone = () => {
-        props.handleDoneButtonClicked(props.shortcut.id, name, url, props.shortcut.tags);
+        props.handleDoneButtonClicked(props.shortcut._id, name, url, props.shortcut.tags);
     };
 
     const handleCancel = () => {
@@ -23,11 +23,11 @@ export default function CustomDialog(props) {
 
 
     const handleRemove = () => {
-        props.handleRemoveButtonClicked(props.shortcut.id);
+        props.handleRemoveButtonClicked(props.shortcut._id);
     };
 
     let isDoneHidden = !(name.trim() && url.trim())
-    let isRemoveHidden = !props.shortcut.id ? true : false;
+    let isRemoveHidden = !props.shortcut._id ? true : false;
 
     return (
         <div>

@@ -8,8 +8,12 @@ const SimpleSearchView = (props) => {
         setSearchText(event.target.value);
         props.handleSearch(props.context, event.target.value);
     };
+    let classes = "form-control mr-sm-2";
+    if(props.className) {
+        classes += ` ${props.className}`;
+    }
     return (
-        <input className="form-control mr-sm-2"
+        <input className={classes}
                value={searchText}
                type="search"
                placeholder={props.placeholder}

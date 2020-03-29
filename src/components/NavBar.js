@@ -6,12 +6,10 @@ import SimpleSearchView from "./SimpleSearchView";
 
 const NavBar = (props) => {
     return (
-        <nav className="navbar navbar-light">
+        <nav className="navbar navbar-light navigation">
             <a href="#" className="navbar-brand">Navbar</a>
             <div>
-                <SimpleSearchView context="shortcut"
-                                  placeholder={"Search shortcuts"}
-                                  handleSearch={props.handleSearchButtonClicked}/>
+
             </div>
 
         </nav>

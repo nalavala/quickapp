@@ -1,7 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Tooltip from '@material-ui/core/Tooltip';
+import CheckBox from "./CheckBox";
+import StarIcon from '@material-ui/icons/Star';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 function QuickShortcut(props) {
+
     const handleEditMenuClicked = (shortcutId, event) => {
         event.stopPropagation();
         props.handleEditMenuClick(shortcutId);
@@ -9,7 +13,7 @@ function QuickShortcut(props) {
 
 
     let logoView = null;
-    if (props.name === "Add Shortcut") {
+    if (props.id === "ADD_SHORTCUT") {
         logoView = <div className="icon">+</div>
     } else {
         let faviconURL = "https://api.statvoo.com/favicon/?url=" + props.url;
@@ -21,11 +25,26 @@ function QuickShortcut(props) {
         props.handleClick(props.id);
     };
 
+    let className = "shortcut";
+    if(props.isSelected) {
+        className += " selected"
+    }
+
+    let favouriteIcon = <StarBorderIcon/>;
+
+    if(props.isFavourite) {
+        favouriteIcon = <StarIcon/>
+    }
+
+
+    const handleFavouriteIconClicked = (event) => {
+        event.stopPropagation();
+        props.favouriteClicked();
+    };
 
     return (
 
-        <div className="shortcut">
-            <div className="shortcut-draggable" draggable="true">
+        <div className={className}>
                 <div onClick={handleOnClick} className="shortcut-anchor">
                     <Tooltip title={props.name}>
                         <div className="shortcut-content">
@@ -35,12 +54,24 @@ function QuickShortcut(props) {
                             </div>
                         </div>
                     </Tooltip>
-                    {props.name !== "Add Shortcut" &&
-                    <div onClick={handleEditMenuClicked.bind(this, props.id)} className="shortcut-edit-menu">
-                        <i className="fa fa-ellipsis-v"></i>
+                    {props.id !== "ADD_SHORTCUT" &&
+                    <div className="shortcut-options">
+                        <div className="left-options">
+                            <div className="select-checkbox">
+                                <CheckBox   isSelected={props.isSelected}
+                                            handleOnChange={props.onCheckboxClicked.bind(this,props.id)}/>
+                            </div>
+                            <div className="favourite" onClick={handleFavouriteIconClicked}>
+                                {favouriteIcon}
+                            </div>
+                        </div>
+                        <div className="right-options">
+                            <div className="shortcut-edit-menu" onClick={handleEditMenuClicked.bind(this, props.id)} >
+                                <i className="fa fa-ellipsis-v"></i>
+                            </div>
+                        </div>
                     </div>}
                 </div>
-            </div>
         </div>
     );
 }

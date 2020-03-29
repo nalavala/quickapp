@@ -52,14 +52,14 @@ const SearchView = (props) => {
         let trimmedSearchText  = searchText.trim();
         if(popperData.length == 0 && !_.isEmpty(trimmedSearchText)) {
             popperData.push({
-                id : "ADD_TAG",
+                _id : "ADD_TAG",
                 value : `Create tag "${trimmedSearchText}"`
             })
         }
         return <div className="popper-data">
             <ul className="list-group">
-                {popperData.map(data => <li className="list-group-item" key={data.id}>
-                    <div className="tag-option" onClick={handleTagOptionClicked.bind(this,data.id)}>{data.value}</div>
+                {popperData.map(data => <li className="list-group-item" key={data._id}>
+                    <div className="tag-option" onClick={handleTagOptionClicked.bind(this,data._id)}>{data.value}</div>
                 </li>)}
             </ul>
         </div>

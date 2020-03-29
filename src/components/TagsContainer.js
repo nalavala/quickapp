@@ -1,18 +1,8 @@
 import React from 'react';
-import CustomChip from "./CustomChip";
 import SearchView from "./SearchView";
+import ChipList from "./ChipList";
 
 const TagsContainer = (props) => {
-
-
-    const tagsView = props.appliedTags.map((tagId) => {
-        console.log(props.tags);
-       return  <CustomChip
-            value={props.tags[tagId].value}
-            id={tagId}
-            onDelete={props.removeTag.bind(this, tagId)}
-        />
-    });
 
     return (
         <div>
@@ -25,9 +15,9 @@ const TagsContainer = (props) => {
                addTag={props.addTag}
                createTag={props.createTag}
            />
-            <div className="tags-container">
-                {tagsView}
-            </div>
+            <ChipList appliedTagIds={props.appliedTags}
+                      tags={props.tags}
+                      removeTag={props.removeTag}/>
         </div>
 
     )
