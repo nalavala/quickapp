@@ -6,14 +6,14 @@ import {getTags, filterByTag, fetchShortcuts} from "../actions/shortcutActions";
 import Droppable from "./DroppableComponent";
 import ContentView from "./ContentView";
 import axios from "axios";
-import api from './../api/shortcuts-api'
+import {getURL} from "./../api/utils"
 
 const MainBodyView = (props) => {
 
 
-    api.removeShortcutsApi([1,2]);
+
     useEffect(() => {
-        axios.get('http://localhost:1234/tags')
+        axios.get(getURL() +'/tags')
             .then(function (response) {
                 console.log(response);
                 props.fetchTags(response.data.tags)
@@ -22,7 +22,7 @@ const MainBodyView = (props) => {
                 console.log(error);
             });
 
-        axios.get('http://localhost:1234/shortcuts')
+        axios.get(getURL() +'/shortcuts')
             .then(function (response) {
                 props.fetchShortcuts(response.data.shortcuts)
             })

@@ -1,16 +1,10 @@
 import axios from 'axios';
-
-
-/**
- * Get all shortcuts
- */
-
-const urlPrefix = "http://localhost:1234";
+import {getURL} from './utils'
 
 const createTag = (tagValue) => {
 
     //return await axios.post(urlPrefix + "/tags", {value: tagValue});
-    return axios.post(urlPrefix + "/tags", {value: tagValue})
+    return axios.post(getURL() + "/tags", {value: tagValue})
         .then(function (response) {
             return response;
         })
@@ -22,7 +16,7 @@ const createTag = (tagValue) => {
 
 const getShortcutsByTag = (id) => {
 
-    return axios.post(urlPrefix + "/tags/getShortcutsByTag", {tag: id})
+    return axios.post(getURL() + "/tags/getShortcutsByTag", {tag: id})
         .then(function (response) {
             return response;
         })
@@ -33,7 +27,7 @@ const getShortcutsByTag = (id) => {
 
 
 const deleteShortcut = (id) => {
-    return axios.delete(urlPrefix + `/shortcuts/${id}`)
+    return axios.delete(getURL() + `/shortcuts/${id}`)
         .then(function (response) {
             return response
         })
@@ -44,7 +38,7 @@ const deleteShortcut = (id) => {
 
 const updateShortcut = (id, name, url, tags) => {
 
-    return axios.post(urlPrefix + "/shortcuts", {name: name, url: url, tags: tags, id: id})
+    return axios.post(getURL() + "/shortcuts", {name: name, url: url, tags: tags, id: id})
         .then(function (response) {
             return response;
         })
@@ -55,7 +49,7 @@ const updateShortcut = (id, name, url, tags) => {
 
 const addShortcut = (name, url, tags) => {
 
-    return axios.post(urlPrefix + "/shortcuts", {name: name, url: url, tags: tags})
+    return axios.post(getURL() + "/shortcuts", {name: name, url: url, tags: tags})
         .then(function (response) {
             return response;
         })
@@ -68,7 +62,7 @@ const addShortcut = (name, url, tags) => {
 
 const removeShortcuts = (ids) => {
 
-    return axios.post(urlPrefix + "/shortcuts/delete", {ids})
+    return axios.post(getURL() + "/shortcuts/delete", {ids})
         .then(function (response) {
             return response;
         })
@@ -80,7 +74,7 @@ const removeShortcuts = (ids) => {
 
 const makeShortcutFavourite = (shortcut) => {
 
-    return axios.put(urlPrefix + "/shortcuts/", {...shortcut})
+    return axios.put(getURL() + "/shortcuts/", {...shortcut})
         .then(function (response) {
             return response;
         })
@@ -92,7 +86,7 @@ const makeShortcutFavourite = (shortcut) => {
 
 const fetchMyFavourites = () => {
 
-    return axios.get(urlPrefix + "/shortcuts/favourites")
+    return axios.get(getURL() + "/shortcuts/favourites")
         .then(function (response) {
             return response;
         })
@@ -110,8 +104,8 @@ const api = {
     updateShortcutApi: updateShortcut,
     addShortcutApi: addShortcut,
     removeShortcutsApi: removeShortcuts,
-    makeShortcutFavouriteApi :makeShortcutFavourite,
-    fetchMyFavouritesApi : fetchMyFavourites
+    makeShortcutFavouriteApi: makeShortcutFavourite,
+    fetchMyFavouritesApi: fetchMyFavourites
 };
 export default api;
 

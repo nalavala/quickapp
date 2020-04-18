@@ -1,5 +1,6 @@
 import {SEARCH_CLICKED} from './../constants/actionsConstants'
 import axios from "axios";
+import {getURL} from '../api/utils'
 
 
 export const handleSearchClicked = (searchText, context) => {
@@ -9,7 +10,7 @@ export const handleSearchClicked = (searchText, context) => {
         searchText = searchText.trim();
         switch (context) {
             case "tags" : {
-                axios.post("http://localhost:1234/tags/search", {searchText: searchText})
+                axios.post(getURL() + "/tags/search", {searchText: searchText})
                     .then(function (response) {
                         return dispatch({
                             type: SEARCH_CLICKED,
@@ -25,7 +26,7 @@ export const handleSearchClicked = (searchText, context) => {
             }
                 break;
             case "shortcut" : {
-                axios.post("http://localhost:1234/shortcuts/search", {searchText: searchText})
+                axios.post(getURL() + "/shortcuts/search", {searchText: searchText})
                     .then(function (response) {
                         return dispatch({
                             type: SEARCH_CLICKED,
@@ -41,8 +42,8 @@ export const handleSearchClicked = (searchText, context) => {
             }
                 break;
             case "shortcut_tags" : {
-                if(!searchText) return;
-                axios.post("http://localhost:1234/tags/search", {searchText: searchText})
+                if (!searchText) return;
+                axios.post(getURL() + "/tags/search", {searchText: searchText})
                     .then(function (response) {
                         return dispatch({
                             type: SEARCH_CLICKED,
